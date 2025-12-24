@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hospital Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    h2 {
+      color: #4c3aeb;
+    }
+    button {
+      margin: 5px 0;
+      padding: 6px 10px;
+    }
+    input {
+      margin: 5px;
+      padding: 5px;
+    }
+    pre {
+      background: #09ed1c;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🏥 SAR Hospital Web Application</h1>
+
+<!-- PATIENT SERVICE -->
+<h2>Patient Service</h2>
+
+<button onclick="getPatients()">Get Patients</button>
+<pre id="patientsOutput"></pre>
+
+<h3>Add Patient</h3>
+<input id="pname" placeholder="Name">
+<input id="page" placeholder="Age">
+<input id="pcondition" placeholder="Condition">
+<button onclick="addPatient()">Add Patient</button>
+
+<hr>
+
+<!-- APPOINTMENT SERVICE -->
+<h2>Appointment Service</h2>
+
+<button onclick="getAppointments()">Get Appointments</button>
+<pre id="appointmentsOutput"></pre>
+
+<h3>Add Appointment</h3>
+<input id="patientId" placeholder="Patient ID">
+<input id="date" placeholder="Date (YYYY-MM-DD)">
+<input id="time" placeholder="Time (HH:MM)">
+<input id="doctor" placeholder="Doctor">
+<button onclick="addAppointment()">Add Appointment</button>
+
+<script>
+  const PATIENT_API = "http://localhost:3000";
+  const APPOINTMENT_API = "http://localhost:4001";
+
+  // ---------- PATIENT ----------
+  async function getPatients() {
+    const res = await fetch(`${PATIENT_API}/patients`);
+    const data = await res.json();
+    document.getElementById("patientsOutput").textContent =
+      JSON.stringify(data, null, 2);
+  }
+
+  async function addPatient() {
+    const body = {
+      name: document.getElementById("pname").value,
+      age: document.getElementById("page").value,
+      condition: document.getElementById("pcondition").value
+    };
+
+    const res = await fetch(`${PATIENT_API}/patients`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
+    alert("Patient added");
+    getPatients();
+  }
+
+  // ---------- APPOINTMENT ----------
+  async function getAppointments() {
+    const res = await fetch(`${APPOINTMENT_API}/appointments`);
+    const data = await res.json();
+    document.getElementById("appointmentsOutput").textContent =
+      JSON.stringify(data, null, 2);
+  }
+
+  async function addAppointment() {
+    const body = {
+      patientId: document.getElementById("patientId").value,
+      date: document.getElementById("date").value,
+      time: document.getElementById("time").value,
+      doctor: document.getElementById("doctor").value
+    };
+
+    await fetch(`${APPOINTMENT_API}/appointments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
+    alert("Appointment added");
+    getAppointments();
+  }
+</script>
+
+</body>
+</html>
